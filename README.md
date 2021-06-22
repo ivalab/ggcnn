@@ -49,7 +49,9 @@ python eval_ggcnn_imagewise.py --network <Path to Trained Network> --dataset cor
 # Test GG-CNN on Cornell Dataset with object-wise split
 python eval_ggcnn_objectwise.py --network <Path to Trained Network> --dataset cornell --dataset-path ../../Dataset/Cornell/ --iou-eval
 
-# Test GG-CNN on AJDajdjacquard.py --network <Path to Trained Network> --dataset jacquard --dataset-path ../../Dataset/Jacquard/original --iou-eval --dataset-path-ajd-test ../../Dataset/Jacquard/coco/512_cnt_angle/test/grasps_test2018/
+# Test GG-CNN on AJD
+python eval_ggcnn_ajd.py --network <Path to Trained Network> --dataset jacquard --dataset-path ../../Dataset/Jacquard/original --iou-eval --dataset-
+path-ajd-test ../../Dataset/Jacquard/coco/512_cnt_angle/test/grasps_test2018/
 ```
 
 
