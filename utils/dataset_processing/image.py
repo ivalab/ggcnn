@@ -23,6 +23,10 @@ class Image:
     def from_file(cls, fname):
         return cls(imread(fname))
 
+    @classmethod
+    def from_jpg_png(cls, fname):
+        return cls(cv2.imread(fname))
+
     def copy(self):
         """
         :return: Copy of self.
@@ -168,6 +172,10 @@ class DepthImage(Image):
     @classmethod
     def from_tiff(cls, fname):
         return cls(imread(fname))
+
+    @classmethod
+    def from_jpg_png(cls, fname):
+        return cls(cv2.imread(fname)[:, :, 0])
 
     def inpaint(self, missing_value=0):
         """

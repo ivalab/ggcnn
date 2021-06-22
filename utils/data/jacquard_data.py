@@ -9,7 +9,34 @@ class JacquardDataset(GraspDatasetBase):
     """
     Dataset wrapper for the Jacquard dataset.
     """
-    def __init__(self, file_path, start=0.0, end=1.0, ds_rotate=0, **kwargs):
+    # def __init__(self, file_path, start=0.0, end=1.0, ds_rotate=0, **kwargs):
+    #     """
+    #     :param file_path: Jacquard Dataset directory.
+    #     :param start: If splitting the dataset, start at this fraction [0,1]
+    #     :param end: If splitting the dataset, finish at this fraction
+    #     :param ds_rotate: If splitting the dataset, rotate the list of items by this fraction first
+    #     :param kwargs: kwargs for GraspDatasetBase
+    #     """
+    #     super(JacquardDataset, self).__init__(**kwargs)
+    #
+    #     graspf = glob.glob(os.path.join(file_path, '*', '*', '*_grasps.txt'))
+    #     graspf.sort()
+    #     l = len(graspf)
+    #
+    #     if l == 0:
+    #         raise FileNotFoundError('No dataset files found. Check path: {}'.format(file_path))
+    #
+    #     if ds_rotate:
+    #         graspf = graspf[int(l*ds_rotate):] + graspf[:int(l*ds_rotate)]
+    #
+    #     depthf = [f.replace('grasps.txt', 'perfect_depth.tiff') for f in graspf]
+    #     rgbf = [f.replace('perfect_depth.tiff', 'RGB.png') for f in depthf]
+    #
+    #     self.grasp_files = graspf[int(l*start):int(l*end)]
+    #     self.depth_files = depthf[int(l*start):int(l*end)]
+    #     self.rgb_files = rgbf[int(l*start):int(l*end)]
+
+    def __init__(self, file_path_1, file_path_2, start=0.0, end=1.0, ds_rotate=0, **kwargs):
         """
         :param file_path: Jacquard Dataset directory.
         :param start: If splitting the dataset, start at this fraction [0,1]
@@ -19,8 +46,15 @@ class JacquardDataset(GraspDatasetBase):
         """
         super(JacquardDataset, self).__init__(**kwargs)
 
-        graspf = glob.glob(os.path.join(file_path, '*', '*_grasps.txt'))
-        graspf.sort()
+        list = glob.glob(os.path.join(file_path_1, '*', '*', '*_RGD.png'))
+        list.sort()
+        list_subfoler = [term.split('/')[-3] for term in list]
+        list_objectname = [term.split('/')[-2] for term in list]
+        list_instance = [term.split('/')[-1] for term in list]
+
+        graspf = []
+        for idx in range(len(list_subfoler)):
+            graspf.append(os.path.join(file_path_2, list_subfoler[idx], list_objectname[idx], list_instance[idx].replace('RGD.png', 'grasps.txt')))
         l = len(graspf)
 
         if l == 0:

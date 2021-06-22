@@ -1,6 +1,7 @@
 import os
 import glob
 
+
 from .grasp_data import GraspDatasetBase
 from utils.dataset_processing import grasp, image
 
@@ -9,7 +10,7 @@ class CornellDataset(GraspDatasetBase):
     """
     Dataset wrapper for the Cornell dataset.
     """
-    def __init__(self, file_path, start=0.0, end=1.0, ds_rotate=0, **kwargs):
+    def __init__(self, file_path, list, ds_rotate=0, **kwargs):
         """
         :param file_path: Cornell Dataset directory.
         :param start: If splitting the dataset, start at this fraction [0,1]
@@ -18,22 +19,18 @@ class CornellDataset(GraspDatasetBase):
         :param kwargs: kwargs for GraspDatasetBase
         """
         super(CornellDataset, self).__init__(**kwargs)
-
-        graspf = glob.glob(os.path.join(file_path, '*', 'pcd*cpos.txt'))
-        graspf.sort()
-        l = len(graspf)
-        if l == 0:
-            raise FileNotFoundError('No dataset files found. Check path: {}'.format(file_path))
-
-        if ds_rotate:
-            graspf = graspf[int(l*ds_rotate):] + graspf[:int(l*ds_rotate)]
+        graspf = []
+        for idx in list:
+            folder_idx = '0' + str(idx // 100) if idx // 100 < 10 else str(idx // 100)
+            file = 'pcd0{}cpos.txt'.format(str(idx)) if idx // 100 < 10 else 'pcd{}cpos.txt'.format(str(idx))
+            graspf.append(os.path.join(file_path, folder_idx, file))
 
         depthf = [f.replace('cpos.txt', 'd.tiff') for f in graspf]
         rgbf = [f.replace('d.tiff', 'r.png') for f in depthf]
 
-        self.grasp_files = graspf[int(l*start):int(l*end)]
-        self.depth_files = depthf[int(l*start):int(l*end)]
-        self.rgb_files = rgbf[int(l*start):int(l*end)]
+        self.grasp_files = graspf[:]
+        self.depth_files = depthf[:]
+        self.rgb_files = rgbf[:]
 
     def _get_crop_attrs(self, idx):
         gtbbs = grasp.GraspRectangles.load_from_cornell_file(self.grasp_files[idx])
